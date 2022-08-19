@@ -1,9 +1,9 @@
-import { useId, useState, Fragment } from 'react'
+import { Fragment, useId, useState } from 'react'
+
+import { AudioPlayer } from '@/components/player/AudioPlayer'
 import Image from 'next/future/image'
 import Link from 'next/link'
 import clsx from 'clsx'
-
-import { AudioPlayer } from '@/components/player/AudioPlayer'
 import posterImage from '@/images/casual_conversations_podcast_cover.jpg'
 
 function randomBetween(min, max, seed = 1) {
@@ -136,8 +136,6 @@ function PersonIcon(props) {
 }
 
 function AboutSection(props) {
-  let [isExpanded, setIsExpanded] = useState(false)
-
   return (
     <section {...props}>
       <h2 className="flex items-center font-mono text-sm font-medium leading-7 text-slate-100">
@@ -149,31 +147,31 @@ function AboutSection(props) {
       </h2>
       <p
         className={clsx(
-          'mt-2 text-base leading-7 text-slate-300',
-          !isExpanded && 'lg:line-clamp-4'
+          'mt-2 text-base leading-7 text-slate-300'
         )}
       >
-        In this show, Braydon, Devyn and Shariq dig deep to get to the facts
-        with guests who have been labeled villains by a society quick to judge,
-        without actually getting the full story. Tune in every Thursday to get
-        to the truth with another misunderstood outcast as they share the
-        missing context in their tragic tale.
+        In this show, Braydon, Devyn and Shariq have an unscripted discussion on
+        modern media ranging from timeless classics, exciting movies and enticing TV shows.
       </p>
-      {!isExpanded && (
-        <button
-          type="button"
-          className="hidden mt-2 text-sm font-bold leading-6 text-pink-500 hover:text-pink-700 active:text-pink-900 lg:inline-block"
-          onClick={() => setIsExpanded(true)}
-        >
-          Show more
-        </button>
-      )}
     </section>
   )
 }
 
 export function Layout({ children }) {
-  let hosts = ['Braydon Coyer', 'Devyn Coyer', 'Shariq Hirani']
+  let hosts = [
+    {
+      name: 'Braydon Coyer',
+      link: 'https://twitter.com/BraydonCoyer',
+    },
+    {
+      name: 'Devyn Coyer',
+      link: 'https://twitter.com/Djcoyer',
+    },
+    {
+      name: 'Shariq Hirani',
+      link: 'https://twitter.com/ShariqHirani',
+    },
+  ];
 
   return (
     <>
@@ -181,14 +179,16 @@ export function Layout({ children }) {
         <div className="hidden lg:sticky lg:top-0 lg:flex lg:w-16 lg:flex-none lg:items-center lg:whitespace-nowrap lg:py-12 lg:text-sm lg:leading-7 lg:[writing-mode:vertical-rl]">
           <span className="font-mono text-slate-500">Hosted by</span>
           <span className="flex gap-6 mt-6 font-bold text-slate-300">
-            {hosts.map((host, hostIndex) => (
-              <Fragment key={host}>
-                {hostIndex !== 0 && (
+            {hosts.map((host, index) => (
+              <Fragment key={index}>
+                {index !== 0 && (
                   <span aria-hidden="true" className="text-slate-400">
                     /
                   </span>
                 )}
-                {host}
+                <a href={host.link} target="_blank" rel="noreferrer">
+                  {host.name}
+                </a>
               </Fragment>
             ))}
           </span>
@@ -213,8 +213,7 @@ export function Layout({ children }) {
               <Link href="/">Casual Commentary</Link>
             </p>
             <p className="mt-3 text-lg font-medium leading-8 text-slate-300">
-              Conversations with the most tragically misunderstood people of our
-              time.
+              Unscripted discussions about modern media.
             </p>
           </div>
           <AboutSection className="hidden mt-12 lg:block" />
@@ -232,14 +231,25 @@ export function Layout({ children }) {
               className="flex justify-center gap-10 mt-4 text-base font-medium leading-7 text-slate-300 sm:gap-8 lg:flex-col lg:gap-4"
             >
               {[
-                ['Spotify', SpotifyIcon],
-                ['Apple Podcast', ApplePodcastIcon],
-                ['Overcast', OvercastIcon],
-                ['RSS Feed', RSSIcon],
-              ].map(([label, Icon]) => (
+                [
+                  'Spotify',
+                  SpotifyIcon,
+                  'https://open.spotify.com/show/2HT1rjn9bxpOePWs5lFFVp',
+                ],
+                [
+                  'Apple Podcast',
+                  ApplePodcastIcon,
+                  'https://podcasts.apple.com/us/podcast/casual-commentary/id1637244064',
+                ],
+                [
+                  'RSS Feed',
+                  RSSIcon,
+                  'https://anchor.fm/s/2d4d2588/podcast/rss',
+                ],
+              ].map(([label, Icon, url]) => (
                 <li key={label} className="flex">
                   <Link
-                    href="/"
+                    href={url}
                     className="flex items-center group"
                     aria-label={label}
                   >
@@ -265,13 +275,15 @@ export function Layout({ children }) {
           </h2>
           <div className="flex gap-6 mt-2 text-sm font-bold leading-7 text-slate-300">
             {hosts.map((host, hostIndex) => (
-              <Fragment key={host}>
+              <Fragment key={host.name}>
                 {hostIndex !== 0 && (
                   <span aria-hidden="true" className="text-slate-400">
                     /
                   </span>
                 )}
-                {host}
+                <a href={host.link} target="_blank" rel="noreferrer">
+                  {host.name}
+                </a>
               </Fragment>
             ))}
           </div>

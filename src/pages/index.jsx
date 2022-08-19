@@ -75,19 +75,6 @@ function EpisodeEntry({ episode }) {
                 Listen
               </span>
             </button>
-            <span
-              aria-hidden="true"
-              className="text-sm font-bold text-slate-400"
-            >
-              /
-            </span>
-            <Link
-              href={`/${episode.id}`}
-              className="flex items-center text-sm font-bold leading-6 text-pink-500 hover:text-pink-700 active:text-pink-900"
-              aria-label={`Show notes for episode ${episode.title}`}
-            >
-              Show notes
-            </Link>
           </div>
         </div>
       </Container>
@@ -99,12 +86,10 @@ export default function Home({ episodes }) {
   return (
     <>
       <Head>
-        <title>
-          Casual Commentary - Conversations about enjoyable media.
-        </title>
+        <title>Casual Commentary - Conversations about modern media.</title>
         <meta
           name="description"
-          content="Conversations with the most tragically misunderstood people of our time."
+          content="Unscripted discussions about modern media."
         />
       </Head>
       <div className="pt-16 pb-12 sm:pb-4 lg:pt-12">
@@ -115,7 +100,7 @@ export default function Home({ episodes }) {
         </Container>
         <div className="divide-y divide-slate-700 sm:mt-4 lg:mt-8 lg:border-t lg:border-slate-100">
           {episodes.map((episode) => (
-            <EpisodeEntry key={episode.id} episode={episode} />
+            <EpisodeEntry key={episode.title} episode={episode} />
           ))}
         </div>
       </div>
@@ -124,14 +109,22 @@ export default function Home({ episodes }) {
 }
 
 export async function getStaticProps() {
-  let feed = await parse('https://their-side-feed.vercel.app/api/feed')
+  let rss = await parse('https://anchor.fm/s/2d4d2588/podcast/rss');
+
+  /**
+   * Remove any HTML tags from the description string provided from Anchor
+   */
+  rss.items.forEach(item => {
+    let newDescription = item.description.replace(/(<([^>]+)>)/gi, '').slice(0, -7);
+    item.description = newDescription;
+  })
 
   return {
     props: {
-      episodes: feed.items.map(
-        ({ id, title, description, enclosures, published }) => ({
-          id,
-          title: `${id}: ${title}`,
+      episodes: rss.items.map(
+        ({ title, description, enclosures, published }, index) => ({
+          id: `${rss.items.length - index}`,
+          title: `${rss.items.length - index}. ${title}`,
           published,
           description,
           audio: enclosures.map((enclosure) => ({
