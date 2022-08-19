@@ -49,7 +49,7 @@ function EpisodeEntry({ episode }) {
             id={`episode-${episode.id}-title`}
             className="mt-2 text-lg font-bold text-slate-100"
           >
-            <Link href={`/${episode.id}`}>{episode.title}</Link>
+            {episode.title}
           </h2>
           <FormattedDate
             date={date}
